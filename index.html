@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>FABIAN OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060a;
+  --bg2: #0d0d14;
+  --bg3: #13131e;
+  --border: #1e1e2e;
+  --accent: #c8ff00;
+  --accent2: #ff6b35;
+  --blue: #4488ff;
+  --purple: #9966ff;
+  --green: #00ff88;
+  --red: #ff3355;
+  --text: #ececec;
+  --text2: #666;
+  --text3: #999;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Mono', monospace;
+  --font-serif: 'Fraunces', serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background: radial-gradient(ellipse 60% 40% at 80% 0%, rgba(200,255,0,0.04) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 30% at 10% 100%, rgba(68,136,255,0.04) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(6,6,10,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 52px;
+}
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+.nav-score {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.nav-score-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--accent);
+  line-height: 1;
+}
+.nav-score-label {
+  font-size: 8px;
+  color: var(--text2);
+  letter-spacing: 2px;
+}
+.nav-time {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 1px;
+  text-align: right;
+}
+.live-dot {
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  margin-right: 4px;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* TABS */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 52px;
+  z-index: 99;
+  background: var(--bg);
+}
+.tabs::-webkit-scrollbar { display:none; }
+.tab {
+  flex-shrink: 0;
+  padding: 12px 20px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* SECTIONS */
+.section { display: none; padding: 20px; }
+.section.active { display: block; }
+
+/* CARDS */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 18px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:1px;
+  background: linear-gradient(90deg, transparent, rgba(200,255,0,0.15), transparent);
+}
+.card-title {
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: var(--text2);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title span { color: var(--text3); }
+
+/* TODAY HERO */
+.today-hero {
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.today-day {
+  font-family: var(--font-display);
+  font-size: 52px;
+  line-height: 1;
+  letter-spacing: 2px;
+  color: var(--text);
+}
+.today-date {
+  font-size: 10px;
+  color: var(--text2);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.today-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--text3);
+}
+.schedule-time {
+  font-size: 9px;
+  color: var(--text2);
+  width: 44px;
+  flex-shrink: 0;
+}
+.schedule-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.schedule-text { color: var(--text); letter-spacing: 0.5px; }
+.schedule-tag {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* STAT GRID */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.stat-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px;
+}
+.stat-label { font-size: 8px; letter-spacing: 2px; color: var(--text2); margin-bottom: 6px; }
+.stat-value { font-family: var(--font-display); font-size: 32px; line-height: 1; }
+.stat-sub { font-size: 9px; color: var(--text3); margin-top: 4px; }
+.stat-bar { height: 2px; background: var(--border); border-radius: 1px; margin-top: 8px; overflow:hidden; }
+.stat-fill { height: 100%; border-radius: 1px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+/* PROGRESS RING */
+.ring-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.ring-svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: var(--border); stroke-width: 6; }
+.ring-fill { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1); }
+.ring-center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ring-pct { font-family: var(--font-display); font-size: 42px; color: var(--accent); line-height: 1; }
+.ring-lbl { font-size: 8px; letter-spacing: 2px; color: var(--text2); }
+
+/* CHECKLIST */
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.check-item:last-child { border-bottom: none; }
+.check-item:active { opacity: 0.7; }
+.check-box {
+  width: 18px; height: 18px;
+  border: 1px solid var(--text2);
+  border-radius: 3px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: all 0.2s;
+}
+.check-box.done { background: var(--accent); border-color: var(--accent); color: #000; }
+.check-label { font-size: 11px; letter-spacing: 0.5px; flex: 1; }
+.check-label.done { color: var(--text2); text-decoration: line-through; }
+.check-meta { font-size: 9px; color: var(--text3); letter-spacing: 1px; }
+
+/* WATER */
+.water-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.water-cup {
+  aspect-ratio: 1;
+  border: 1px solid var(--text2);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.water-cup.filled { border-color: var(--blue); background: rgba(68,136,255,0.15); }
+.water-cup:active { transform: scale(0.93); }
+.water-total {
+  font-family: var(--font-display);
+  font-size: 48px;
+  color: var(--blue);
+  text-align: center;
+  line-height: 1;
+}
+.water-sub { font-size: 9px; color: var(--text2); letter-spacing: 2px; text-align: center; margin-top: 4px; }
+
+/* WORKOUT VARIANTS */
+.workout-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.wt-btn {
+  flex: 1;
+  padding: 8px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 1px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.wt-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,255,0,0.05); }
+
+.workout-day {
+  background: var(--bg3);
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-left: 2px solid var(--border);
+  transition: border-color 0.2s;
+}
+.workout-day.today { border-left-color: var(--accent); }
+.workout-day.football { border-left-color: var(--blue); }
+.workout-day.rest { border-left-color: var(--border); opacity: 0.5; }
+.wd-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.wd-day { font-family: var(--font-display); font-size: 16px; letter-spacing: 2px; }
+.wd-tag {
+  font-size: 8px; letter-spacing: 1.5px; padding: 2px 8px;
+  border-radius: 2px;
+}
+.wd-desc { font-size: 10px; color: var(--text3); line-height: 1.5; }
+
+/* SKINCARE */
+.skincare-time {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.sk-slot {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px;
+}
+.sk-slot-label { font-size: 8px; letter-spacing: 2px; color: var(--text2); margin-bottom: 8px; }
+.sk-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+.sk-step:last-child { border-bottom: none; }
+.sk-dot {
+  width: 6px; height: 6px;
+  border: 1px solid var(--text2);
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.sk-dot.done { background: var(--accent); border-color: var(--accent); }
+.sk-text { font-size: 10px; letter-spacing: 0.5px; }
+
+/* BUSINESS */
+.goal-item {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 10px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+}
+.goal-item.priority { border-left-color: var(--accent2); }
+.goal-item.active-goal { border-left-color: var(--accent); }
+.goal-check-box {
+  width: 16px; height: 16px;
+  border: 1px solid var(--text2);
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  transition: all 0.2s;
+}
+.goal-check-box.done { background: var(--accent); border-color: var(--accent); color: #000; }
+.goal-content { flex: 1; }
+.goal-title { font-size: 11px; letter-spacing: 0.5px; margin-bottom: 3px; }
+.goal-tag { font-size: 8px; letter-spacing: 1.5px; color: var(--text3); }
+
+/* PROGRESS BAR */
+.progress-wrap { margin-bottom: 12px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 9px; color: var(--text3); margin-bottom: 6px; letter-spacing: 1px; }
+.progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 1s ease; }
+
+/* RECOVERY SCORE */
+.recovery-big {
+  text-align: center;
+  padding: 20px 0;
+}
+.recovery-num {
+  font-family: var(--font-display);
+  font-size: 80px;
+  line-height: 1;
+}
+.recovery-label { font-size: 9px; letter-spacing: 3px; color: var(--text2); margin-top: 4px; }
+.recovery-factors { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 14px; }
+.rf-item { background: var(--bg3); border-radius: 4px; padding: 10px; }
+.rf-label { font-size: 8px; letter-spacing: 2px; color: var(--text3); margin-bottom: 4px; }
+.rf-val { font-family: var(--font-display); font-size: 22px; }
+
+/* INPUT */
+.input-row { display: flex; gap: 8px; margin-top: 8px; }
+.dash-input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.dash-input:focus { border-color: var(--accent); }
+.dash-btn {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 10px 16px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.dash-btn:active { opacity: 0.8; }
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-family: var(--font-body);
+}
+
+/* SEPARATOR */
+.sep { height: 1px; background: var(--border); margin: 12px 0; }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.section.active .card,
+.section.active .today-hero,
+.section.active .stat-grid,
+.section.active .ring-wrap { animation: fadeUp 0.4s ease both; }
+
+/* MOBILE SAFE */
+@media (max-width: 380px) {
+  .today-day { font-size: 40px; }
+  .stat-value { font-size: 26px; }
+  nav { padding: 0 14px; }
+  .section { padding: 14px; }
+}
+
+.color-accent { color: var(--accent); }
+.color-blue { color: var(--blue); }
+.color-purple { color: var(--purple); }
+.color-green { color: var(--green); }
+.color-red { color: var(--red); }
+.color-orange { color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">F·OS</div>
+  <div class="nav-score">
+    <div>
+      <div class="nav-score-label">DAILY SCORE</div>
+      <div class="nav-score-num" id="navScore">—</div>
+    </div>
+  </div>
+  <div class="nav-time">
+    <div><span class="live-dot"></span><span id="clock">--:--</span></div>
+    <div id="dateShort" style="margin-top:2px"></div>
+  </div>
+</nav>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('today')">HEUTE</div>
+  <div class="tab" onclick="showTab('recovery')">RECOVERY</div>
+  <div class="tab" onclick="showTab('training')">TRAINING</div>
+  <div class="tab" onclick="showTab('body')">KÖRPER</div>
+  <div class="tab" onclick="showTab('business')">BUSINESS</div>
+</div>
+
+<!-- TAB: HEUTE -->
+<div class="section active" id="tab-today">
+
+  <div class="today-hero">
+    <div class="today-day" id="todayDay">—</div>
+    <div class="today-date" id="todayDate">—</div>
+    <div class="today-schedule" id="todaySchedule"></div>
+  </div>
+
+  <!-- Daily Score Ring -->
+  <div class="card">
+    <div class="card-title">Tages-Score</div>
+    <div class="ring-wrap" style="position:relative; height:140px;">
+      <svg class="ring-svg" width="140" height="140" viewBox="0 0 140 140">
+        <circle class="ring-bg" cx="70" cy="70" r="60"/>
+        <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="60" stroke-dasharray="377" stroke-dashoffset="377"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-pct" id="ringPct">0%</div>
+        <div class="ring-lbl">COMPLETED</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Checklist -->
+  <div class="card">
+    <div class="card-title">Tages-Checklist</div>
+    <div id="quickChecks"></div>
+  </div>
+
+  <!-- Water heute -->
+  <div class="card">
+    <div class="card-title">Wasser <span id="waterPct"></span></div>
+    <div class="water-grid" id="waterCups"></div>
+    <div class="water-total" id="waterTotal">0 ml</div>
+    <div class="water-sub">ZIEL: 3000 ML · 300 ML PRO CUP</div>
+  </div>
+
+</div>
+
+<!-- TAB: RECOVERY -->
+<div class="section" id="tab-recovery">
+
+  <div class="card">
+    <div class="card-title">Recovery Status</div>
+    <div class="recovery-big">
+      <div class="recovery-num color-green" id="recoveryScore">—</div>
+      <div class="recovery-label">RECOVERY INDEX</div>
+    </div>
+    <div class="recovery-factors">
+      <div class="rf-item">
+        <div class="rf-label">SCHLAF</div>
+        <div class="rf-val color-purple" id="sleepVal">—</div>
+      </div>
+      <div class="rf-item">
+        <div class="rf-label">HRV</div>
+        <div class="rf-val color-green" id="hrvVal">—</div>
+      </div>
+      <div class="rf-item">
+        <div class="rf-label">WASSER</div>
+        <div class="rf-val color-blue" id="waterRecVal">—</div>
+      </div>
+      <div class="rf-item">
+        <div class="rf-label">SUPPLEMENTS</div>
+        <div class="rf-val color-accent" id="suppRecVal">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Schlaf Eingabe</div>
+    <div style="font-size:10px; color:var(--text3); margin-bottom:10px;">Wie lange hast du heute Nacht geschlafen?</div>
+    <div class="input-row">
+      <input class="dash-input" id="sleepInput" type="number" step="0.1" min="4" max="12" placeholder="z.B. 8.5">
+      <button class="dash-btn" onclick="setSleep()">LOG</button>
+    </div>
+    <div style="font-size:9px; color:var(--text3); margin-top:8px; letter-spacing:1px;">Bett: 23:00–23:30 · Aufstehen: 08:00–08:30 · Ziel: 8.5h</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Supplement Stack</div>
+    <div id="suppChecks"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Skincare Protokoll</div>
+    <div class="skincare-time">
+      <div class="sk-slot">
+        <div class="sk-slot-label">MORGENS</div>
+        <div class="sk-step" onclick="toggleSkDot(this)">
+          <div class="sk-dot"></div>
+          <div class="sk-text">Kaltes Wasser</div>
+        </div>
+        <div class="sk-step" onclick="toggleSkDot(this)">
+          <div class="sk-dot"></div>
+          <div class="sk-text">SPF (wenn draußen)</div>
+        </div>
+      </div>
+      <div class="sk-slot">
+        <div class="sk-slot-label">ABENDS</div>
+        <div class="sk-step" onclick="toggleSkDot(this)">
+          <div class="sk-dot"></div>
+          <div class="sk-text">Cleanser</div>
+        </div>
+        <div class="sk-step" onclick="toggleSkDot(this)">
+          <div class="sk-dot"></div>
+          <div class="sk-text">Retinol</div>
+        </div>
+        <div class="sk-step" onclick="toggleSkDot(this)">
+          <div class="sk-dot"></div>
+          <div class="sk-text">Feuchtigkeitscreme</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB: TRAINING -->
+<div class="section" id="tab-training">
+
+  <div class="card">
+    <div class="card-title">Trainingsplan wählen</div>
+    <div class="workout-toggle">
+      <button class="wt-btn active" onclick="setVariant(1, this)">VARIANTE 1</button>
+      <button class="wt-btn" onclick="setVariant(2, this)">VARIANTE 2</button>
+    </div>
+    <div style="font-size:9px; color:var(--text3); letter-spacing:1px;" id="variantDesc">Torso/Limbs-Split mit Fußball</div>
+  </div>
+
+  <div id="weekPlan"></div>
+
+</div>
+
+<!-- TAB: KÖRPER -->
+<div class="section" id="tab-body">
+
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-label">KÖRPERGRÖSSE</div>
+      <div class="stat-value color-accent">177<span style="font-size:14px">cm</span></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">GEWICHT</div>
+      <div class="stat-value" id="weightDisplay">71<span style="font-size:14px">kg</span></div>
+      <div class="stat-sub">BMI: <span id="bmiVal">22.7</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Gewicht tracken</div>
+    <div class="input-row">
+      <input class="dash-input" id="weightInput" type="number" step="0.1" placeholder="kg eingeben">
+      <button class="dash-btn" onclick="logWeight()">LOG</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kalorien Ziel</div>
+    <div style="font-family:var(--font-display); font-size:38px; color:var(--accent2);">2600 <span style="font-size:16px">kcal</span></div>
+    <div style="font-size:9px; color:var(--text3); letter-spacing:1px; margin-top:4px;">LEAN BULK · +200 ÜBER ERHALTUNG</div>
+    <div class="sep"></div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <div>
+        <div style="font-size:8px; letter-spacing:2px; color:var(--text2);">PROTEIN</div>
+        <div style="font-family:var(--font-display); font-size:22px; color:var(--green);">178g</div>
+        <div style="font-size:9px; color:var(--text3);">2.5g/kg</div>
+      </div>
+      <div>
+        <div style="font-size:8px; letter-spacing:2px; color:var(--text2);">CARBS</div>
+        <div style="font-family:var(--font-display); font-size:22px; color:var(--blue);">280g</div>
+      </div>
+      <div>
+        <div style="font-size:8px; letter-spacing:2px; color:var(--text2);">FETT</div>
+        <div style="font-family:var(--font-display); font-size:22px; color:var(--accent2);">72g</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Looksmaxxing Protokoll</div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-label">Skincare Morgen</div>
+      <div class="check-meta">TÄGLICH</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-label">Skincare Abend</div>
+      <div class="check-meta">TÄGLICH</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-label">Mewing / Haltung bewusst</div>
+      <div class="check-meta">TÄGLICH</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-label">Haare / Styling</div>
+      <div class="check-meta">TÄGLICH</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-label">Mindestens 8h Schlaf</div>
+      <div class="check-meta">RECOVERY</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB: BUSINESS -->
+<div class="section" id="tab-business">
+
+  <div class="card">
+    <div class="card-title">Mission Status</div>
+    <div style="margin-bottom:10px;">
+      <div style="font-size:8px; letter-spacing:2px; color:var(--text2); margin-bottom:4px;">VESTA-AI</div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Phase 1–2 Aktiv</span><span class="color-accent">35%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:8px; letter-spacing:2px; color:var(--text2); margin-bottom:4px;">10K KAPITAL AUFBAU</div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Minijob Start soon</span><span class="color-accent" id="tenKpct">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="tenKbar" style="width:0%"></div></div>
+      </div>
+      <div class="input-row" style="margin-top:6px;">
+        <input class="dash-input" id="tenKinput" type="number" placeholder="Aktuelles Kapital (€)">
+        <button class="dash-btn" onclick="updateTenK()">SET</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Aktive Ziele</div>
+    <div class="goal-item priority" onclick="toggleGoalItem(this)">
+      <div class="goal-check-box"></div>
+      <div class="goal-content">
+        <div class="goal-title">Vesta-AI Phase 2 Tasks priorisieren</div>
+        <div class="goal-tag">VESTA-AI · HIGH PRIORITY</div>
+      </div>
+    </div>
+    <div class="goal-item active-goal" onclick="toggleGoalItem(this)">
+      <div class="goal-check-box"></div>
+      <div class="goal-content">
+        <div class="goal-title">Abitur — Lernplan heute</div>
+        <div class="goal-tag">SCHULE · KRITISCH</div>
+      </div>
+    </div>
+    <div class="goal-item" onclick="toggleGoalItem(this)">
+      <div class="goal-check-box"></div>
+      <div class="goal-content">
+        <div class="goal-title">Valencia Move — Wohnungsmarkt recherchieren</div>
+        <div class="goal-tag">LANGFRISTIG · STRATEGIE</div>
+      </div>
+    </div>
+    <div class="goal-item" onclick="toggleGoalItem(this)">
+      <div class="goal-check-box"></div>
+      <div class="goal-content">
+        <div class="goal-title">Minijob — Bewerbung / Vorbereitung</div>
+        <div class="goal-tag">INCOME · SOON</div>
+      </div>
+    </div>
+    <div class="goal-item" onclick="toggleGoalItem(this)">
+      <div class="goal-check-box"></div>
+      <div class="goal-content">
+        <div class="goal-title">Studium Wintersemester vorbereiten</div>
+        <div class="goal-tag">ZUKUNFT · PLANUNG</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Notiz hinzufügen</div>
+    <textarea class="dash-input" id="noteInput" rows="3" placeholder="Gedanke, Idee, Task..." style="resize:none; width:100%;"></textarea>
+    <div class="input-row" style="margin-top:6px;">
+      <button class="dash-btn" style="flex:1;" onclick="saveNote()">SPEICHERN</button>
+    </div>
+    <div id="notesList" style="margin-top:10px;"></div>
+  </div>
+
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────
+const state = JSON.parse(localStorage.getItem('fabianOS') || '{}');
+const today = new Date().toDateString();
+if (state.date !== today) {
+  // reset daily items
+  state.date = today;
+  state.water = 0;
+  state.quickChecks = {};
+  state.supps = {};
+  state.skDots = {};
+  state.skincare = {};
+  localStorage.setItem('fabianOS', JSON.stringify(state));
+}
+
+function save() { localStorage.setItem('fabianOS', JSON.stringify(state)); }
+
+// ─── CLOCK ───────────────────────────────────────────────
+function tick() {
+  const n = new Date();
+  document.getElementById('clock').textContent = n.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  const days = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+  const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  document.getElementById('dateShort').textContent = `${days[n.getDay()]} ${n.getDate()} ${months[n.getMonth()]}`;
+}
+tick(); setInterval(tick, 1000);
+
+// ─── TODAY HEADER ────────────────────────────────────────
+const DAYS_DE = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const MONTHS_DE = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+function buildTodayHeader() {
+  const n = new Date();
+  const dow = n.getDay();
+  document.getElementById('todayDay').textContent = DAYS_DE[dow];
+  document.getElementById('todayDate').textContent = `${n.getDate()}. ${MONTHS_DE[n.getMonth()]} ${n.getFullYear()}`;
+
+  // Build schedule based on day
+  const schedules = {
+    1: [ // Montag
+      {time:'13:15', text:'Gym — Torso + Bauch (V1)', col:'#c8ff00', tag:'GYM'},
+      {time:'18:00', text:'Gym — Upper Body (V2)', col:'#9966ff', tag:'ALT'},
+      {time:'19:00', text:'Fußballtraining', col:'#4488ff', tag:'FUSSBALL'},
+    ],
+    2: [ // Dienstag
+      {time:'18:00', text:'Gym — Limbs + Arme (V1)', col:'#c8ff00', tag:'GYM'},
+      {time:'19:00', text:'Fußballtraining (V2)', col:'#4488ff', tag:'FUSSBALL'},
+    ],
+    3: [ // Mittwoch
+      {time:'19:00', text:'Fußballtraining (V1)', col:'#4488ff', tag:'FUSSBALL'},
+      {time:'18:00', text:'Gym — Lower + Bauch (V2)', col:'#9966ff', tag:'ALT'},
+    ],
+    4: [ // Donnerstag
+      {time:'13:15', text:'Gym — Torso + Bauch (V1)', col:'#c8ff00', tag:'GYM'},
+      {time:'19:00', text:'Fußballtraining (V2)', col:'#4488ff', tag:'FUSSBALL'},
+    ],
+    5: [ // Freitag
+      {time:'18:00', text:'Gym — Arme (V1)', col:'#c8ff00', tag:'GYM'},
+      {time:'18:00', text:'Gym — Upper (V2)', col:'#9966ff', tag:'ALT'},
+    ],
+    6: [ // Samstag
+      {time:'16:00', text:'Fußballspiel', col:'#4488ff', tag:'SPIEL'},
+    ],
+    0: [ // Sonntag
+      {time:'—', text:'Aktive Recovery / Rest', col:'#666', tag:'REST'},
+      {time:'16:00', text:'Evtl. Fußballspiel', col:'#4488ff', tag:'SPIEL?'},
+    ],
+  };
+
+  const fixed = [
+    {time:'08:00', text:'Aufstehen · Kaltes Wasser Skincare', col:'#00ff88', tag:'MORGEN'},
+    {time:'23:00', text:'Bettzeit · Skincare Abend', col:'#9966ff', tag:'SCHLAF'},
+  ];
+
+  const items = [fixed[0], ...(schedules[dow]||[]), fixed[1]];
+  const sc = document.getElementById('todaySchedule');
+  sc.innerHTML = '';
+  items.forEach(s => {
+    sc.innerHTML += `<div class="schedule-item">
+      <div class="schedule-time">${s.time}</div>
+      <div class="schedule-dot" style="background:${s.col}"></div>
+      <div class="schedule-text">${s.text}</div>
+      <div class="schedule-tag" style="color:${s.col}; border:1px solid ${s.col}20">${s.tag}</div>
+    </div>`;
+  });
+}
+buildTodayHeader();
+
+// ─── TABS ────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  updateScore();
+}
+
+// ─── QUICK CHECKS ────────────────────────────────────────
+const quickCheckDefs = [
+  {id:'gym', label:'Gym / Training', meta:'SPORT'},
+  {id:'supps_morning', label:'Morgen-Supplements', meta:'SUPP'},
+  {id:'supps_evening', label:'Abend-Supplements', meta:'SUPP'},
+  {id:'skincare_am', label:'Skincare Morgen', meta:'LOOKS'},
+  {id:'skincare_pm', label:'Skincare Abend', meta:'LOOKS'},
+  {id:'water_goal', label:'3L Wasser getrunken', meta:'HEALTH'},
+  {id:'sleep_logged', label:'Schlaf geloggt', meta:'RECOVERY'},
+  {id:'vesta_task', label:'Vesta-AI Task erledigt', meta:'BUSINESS'},
+];
+
+function buildQuickChecks() {
+  const el = document.getElementById('quickChecks');
+  el.innerHTML = '';
+  quickCheckDefs.forEach(c => {
+    const done = state.quickChecks[c.id];
+    el.innerHTML += `<div class="check-item" onclick="toggleQuickCheck('${c.id}',this)">
+      <div class="check-box ${done?'done':''}"> ${done?'✓':''}</div>
+      <div class="check-label ${done?'done':''}">${c.label}</div>
+      <div class="check-meta">${c.meta}</div>
+    </div>`;
+  });
+}
+
+function toggleQuickCheck(id, el) {
+  state.quickChecks[id] = !state.quickChecks[id];
+  save(); buildQuickChecks(); updateScore();
+}
+buildQuickChecks();
+
+// ─── WATER ───────────────────────────────────────────────
+const WATER_CUPS = 10;
+function buildWater() {
+  const el = document.getElementById('waterCups');
+  el.innerHTML = '';
+  for (let i=0;i<WATER_CUPS;i++) {
+    const filled = i < (state.water||0);
+    el.innerHTML += `<div class="water-cup ${filled?'filled':''}" onclick="setWater(${i+1})">
+      ${filled?'💧':''}
+    </div>`;
+  }
+  const ml = (state.water||0)*300;
+  document.getElementById('waterTotal').textContent = ml+' ml';
+  document.getElementById('waterPct').textContent = Math.round(ml/3000*100)+'%';
+  // sync recovery tab
+  if (document.getElementById('waterRecVal'))
+    document.getElementById('waterRecVal').textContent = ml+'ml';
+}
+function setWater(n) {
+  state.water = (state.water===n) ? n-1 : n;
+  save(); buildWater(); updateScore();
+}
+buildWater();
+
+// ─── SUPPLEMENTS ─────────────────────────────────────────
+const suppDefs = [
+  {id:'omega3', name:'OMEGA-3', dose:'2g', time:'Morgens'},
+  {id:'kreatin', name:'KREATIN MONOHYDRAT', dose:'5g', time:'Pre-Workout'},
+  {id:'vitd', name:'VITAMIN D3 + K2', dose:'5000 IU', time:'Morgens'},
+  {id:'zink', name:'ZINK', dose:'15mg', time:'Abends'},
+  {id:'mag', name:'MAGNESIUM BISGLYCINAT', dose:'400mg', time:'1h vor Schlaf'},
+];
+
+function buildSupps() {
+  const el = document.getElementById('suppChecks');
+  if (!el) return;
+  el.innerHTML = '';
+  let done = 0;
+  suppDefs.forEach(s => {
+    const checked = state.supps[s.id];
+    if (checked) done++;
+    el.innerHTML += `<div class="check-item" onclick="toggleSupp('${s.id}',this)">
+      <div class="check-box ${checked?'done':''}"> ${checked?'✓':''}</div>
+      <div style="flex:1;">
+        <div class="check-label ${checked?'done':''}">${s.name}</div>
+        <div style="font-size:9px;color:var(--text3);letter-spacing:1px;">${s.dose} · ${s.time}</div>
+      </div>
+    </div>`;
+  });
+  if (document.getElementById('suppRecVal'))
+    document.getElementById('suppRecVal').textContent = done+'/'+suppDefs.length;
+}
+function toggleSupp(id) {
+  state.supps[id] = !state.supps[id];
+  save(); buildSupps(); updateScore();
+}
+buildSupps();
+
+// ─── SLEEP ───────────────────────────────────────────────
+function setSleep() {
+  const v = parseFloat(document.getElementById('sleepInput').value);
+  if (isNaN(v)) return;
+  state.sleep = v;
+  save();
+  document.getElementById('sleepVal').textContent = v+'h';
+  state.quickChecks['sleep_logged'] = true;
+  buildQuickChecks(); updateScore(); updateRecovery();
+}
+if (state.sleep) {
+  document.getElementById('sleepVal').textContent = state.sleep+'h';
+}
+
+// ─── RECOVERY SCORE ──────────────────────────────────────
+function updateRecovery() {
+  let score = 0;
+  // Sleep (40 pts)
+  const sl = state.sleep || 0;
+  if (sl >= 8) score += 40;
+  else if (sl >= 7) score += 28;
+  else if (sl >= 6) score += 15;
+  // Supps (30 pts)
+  const suppCount = Object.values(state.supps||{}).filter(Boolean).length;
+  score += Math.round((suppCount / suppDefs.length) * 30);
+  // Water (20 pts)
+  const ml = (state.water||0)*300;
+  score += Math.round((Math.min(ml,3000)/3000) * 20);
+  // Checks (10 pts)
+  const qc = Object.values(state.quickChecks||{}).filter(Boolean).length;
+  score += Math.round((qc / quickCheckDefs.length) * 10);
+
+  const el = document.getElementById('recoveryScore');
+  if (el) {
+    el.textContent = score;
+    el.className = 'recovery-num ' + (score>=75?'color-green':score>=50?'color-accent':'color-orange');
+  }
+  if (document.getElementById('hrvVal')) document.getElementById('hrvVal').textContent = '67ms';
+}
+updateRecovery();
+
+// ─── SCORE RING ──────────────────────────────────────────
+function updateScore() {
+  const total = quickCheckDefs.length + suppDefs.length + WATER_CUPS;
+  const qcDone = Object.values(state.quickChecks||{}).filter(Boolean).length;
+  const suppDone = Object.values(state.supps||{}).filter(Boolean).length;
+  const done = qcDone + suppDone + (state.water||0);
+  const pct = Math.round((done/total)*100);
+  document.getElementById('ringPct').textContent = pct+'%';
+  document.getElementById('navScore').textContent = pct+'%';
+  const circumference = 377;
+  const offset = circumference - (pct/100)*circumference;
+  document.getElementById('ringFill').style.strokeDashoffset = offset;
+  updateRecovery();
+}
+setTimeout(updateScore, 300);
+
+// ─── TRAINING ────────────────────────────────────────────
+const plans = {
+  1: [
+    {day:'Montag', type:'gym', desc:'Torso + Bauch — 13:15 Uhr\nAbends: Fußballtraining 19:00'},
+    {day:'Dienstag', type:'gym', desc:'Limbs + Arme — 18:00 Uhr'},
+    {day:'Mittwoch', type:'football', desc:'Fußballtraining — 19:00 Uhr'},
+    {day:'Donnerstag', type:'gym', desc:'Torso + Bauch — 13:15 Uhr'},
+    {day:'Freitag', type:'gym', desc:'Arme — 18:00 Uhr'},
+    {day:'Samstag', type:'football', desc:'Fußballspiel — ca. 16:00 Uhr'},
+    {day:'Sonntag', type:'rest', desc:'Recovery / aktive Pause'},
+  ],
+  2: [
+    {day:'Montag', type:'gym', desc:'Upper Body — 18:00 Uhr'},
+    {day:'Dienstag', type:'football', desc:'Fußballtraining — 19:00 Uhr'},
+    {day:'Mittwoch', type:'gym', desc:'Lower + Bauch — 18:00 Uhr'},
+    {day:'Donnerstag', type:'football', desc:'Fußballtraining — 19:00 Uhr'},
+    {day:'Freitag', type:'gym', desc:'Upper Body — 18:00 Uhr'},
+    {day:'Samstag', type:'football', desc:'Fußballspiel — ca. 16:00 Uhr'},
+    {day:'Sonntag', type:'rest', desc:'Recovery'},
+  ]
+};
+
+const typeColors = {gym:'var(--accent)', football:'var(--blue)', rest:'var(--text2)'};
+const typeTags = {gym:'GYM', football:'⚽ FUSSBALL', rest:'REST'};
+
+let currentVariant = 1;
+function buildWeekPlan() {
+  const todayDow = new Date().getDay(); // 0=Sun,1=Mon...
+  const el = document.getElementById('weekPlan');
+  el.innerHTML = '';
+  const plan = plans[currentVariant];
+  plan.forEach((d, i) => {
+    // Map plan index: 0=Mon(1)...6=Sun(0)
+    const planDow = i===6?0:i+1;
+    const isToday = planDow === todayDow;
+    el.innerHTML += `<div class="workout-day ${d.type} ${isToday?'today':''}">
+      <div class="wd-header">
+        <div class="wd-day" style="color:${isToday?'var(--accent)':'var(--text)'}">${d.day}${isToday?' ◀':''}</div>
+        <div class="wd-tag" style="color:${typeColors[d.type]}; border:1px solid ${typeColors[d.type]}30; padding:2px 8px; border-radius:2px; font-size:8px; letter-spacing:1.5px;">${typeTags[d.type]}</div>
+      </div>
+      <div class="wd-desc">${d.desc.replace(/\n/g,'<br>')}</div>
+    </div>`;
+  });
+}
+
+function setVariant(v, btn) {
+  currentVariant = v;
+  document.querySelectorAll('.wt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('variantDesc').textContent = v===1?'Torso/Limbs-Split mit Fußball':'Upper/Lower-Split mit Fußball';
+  buildWeekPlan();
+}
+buildWeekPlan();
+
+// ─── SKINCARE DOTS ───────────────────────────────────────
+function toggleSkDot(el) {
+  const dot = el.querySelector('.sk-dot');
+  dot.classList.toggle('done');
+}
+
+// ─── GENERIC TOGGLES ─────────────────────────────────────
+function toggleCheck(el) {
+  const box = el.querySelector('.check-box');
+  const label = el.querySelector('.check-label');
+  const done = box.classList.toggle('done');
+  box.textContent = done?'✓':'';
+  if (done) label.classList.add('done'); else label.classList.remove('done');
+  updateScore();
+}
+
+function toggleGoalItem(el) {
+  const box = el.querySelector('.goal-check-box');
+  const done = box.classList.toggle('done');
+  box.textContent = done?'✓':'';
+}
+
+// ─── WEIGHT ──────────────────────────────────────────────
+function logWeight() {
+  const v = parseFloat(document.getElementById('weightInput').value);
+  if (isNaN(v)) return;
+  state.weight = v;
+  save();
+  const bmi = (v / (1.77*1.77)).toFixed(1);
+  document.getElementById('weightDisplay').innerHTML = v+'<span style="font-size:14px">kg</span>';
+  document.getElementById('bmiVal').textContent = bmi;
+}
+
+// ─── 10K TRACKER ─────────────────────────────────────────
+function updateTenK() {
+  const v = parseFloat(document.getElementById('tenKinput').value);
+  if (isNaN(v)) return;
+  state.tenK = v;
+  save();
+  const pct = Math.min(Math.round((v/10000)*100),100);
+  document.getElementById('tenKpct').textContent = pct+'%';
+  document.getElementById('tenKbar').style.width = pct+'%';
+}
+if (state.tenK) {
+  document.getElementById('tenKinput').value = state.tenK;
+  updateTenK();
+}
+
+// ─── NOTES ───────────────────────────────────────────────
+function saveNote() {
+  const txt = document.getElementById('noteInput').value.trim();
+  if (!txt) return;
+  state.notes = state.notes || [];
+  state.notes.unshift({txt, ts: new Date().toLocaleString('de-DE',{hour:'2-digit',minute:'2-digit'})});
+  if (state.notes.length > 10) state.notes.pop();
+  document.getElementById('noteInput').value = '';
+  save(); renderNotes();
+}
+function renderNotes() {
+  const el = document.getElementById('notesList');
+  if (!el || !state.notes) return;
+  el.innerHTML = (state.notes||[]).map(n=>`
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:10px;margin-bottom:6px;">
+      <div style="font-size:10px;color:var(--text);letter-spacing:0.5px;">${n.txt}</div>
+      <div style="font-size:8px;color:var(--text3);margin-top:4px;letter-spacing:1px;">${n.ts}</div>
+    </div>`).join('');
+}
+renderNotes();
+</script>
+</body>
+</html>
